@@ -3,6 +3,8 @@
  * 时间: 2016/9/9
  * 作者: lr
  * 邮箱: 2046@live.cn
+ * 项目地址：https://github.com/kscript/Carousel
+ * 说明文档：https://kscript.github.io/Carousel/
  */
 $.extend({
     widget:function(box,conf){
