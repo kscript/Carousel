@@ -12,7 +12,6 @@
  *
  * 
  */
-<<<<<<< HEAD
 $.extend({
 	widget: function(box, conf) {
 		var that = this;
@@ -709,5 +708,4 @@ $.extend({
     if ($(".J_widget").length != 0 && !$.noLrCarousel) {
         $.render_all(".J_widget");
     }
->>>>>>> 2bdc5bf4b67ca44f638bc58e8e0d66db19af96fb
 })();
