@@ -270,6 +270,7 @@ $.extend({
 				content.animate({
 					left: -(conf.index + n) * conf.drift
 				},conf.speend, conf.line,function() {
+
 					conf.callback && conf.callback(that);
 					conf.status = conf.status == 1 ? 0 : conf.status;
 				})
@@ -303,7 +304,7 @@ $.extend({
 					}).siblings().css("zIndex", 20).fadeOut(500);
 				}
 			}
-			content.children().eq((conf.index + conf.move)).addClass("active").siblings().removeClass("active");
+			content.children().eq((conf.index + conf.move+(/scroll/.test(conf.effect)?1:0))).addClass("active").siblings().removeClass("active");
 			nav.children().eq(conf.index).addClass("active").siblings().removeClass("active");
 			if (navText.length !== 0) {
 				navText.children("li").eq(conf.index).addClass("active").siblings().removeClass("active");
@@ -358,4 +359,4 @@ $.extend({
 	if ($(".J_widget").length != 0 && !$.noLrCarousel) {
 		$.render_all(".J_widget");
 	}
-})();
+})()
