@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>轮播</title>
+<script src="//cdn.bootcss.com/jquery/1.7.2/jquery.min.js"></script>
+<script>var jQuery;!jQuery&&document.write("<script src='https://libs.baidu.com/jquery/1.7.2/jquery.min.js'><\/script>");</script>
+<style>*{padding: 0;margin: 0;}
+body{font-family: "Microsoft Yahei","微软雅黑",Tahoma,Arial,Helvetica,STHeiti;}
+li{list-style: none;}
+.abs{position: absolute;}
+.left{left: 0;}
+.right{right:0;}
+.clear:after,.clear:before,.row:after,.row:before{content:"";display:table;}
+.clear:after,.row:after{clear:both;}
+.clear,.row{zoom:1;}
+.row .left{float: left;}
+.col-1{width: 8.33333%}
+.col-2{width: 16.66666%}
+.col-3{width:25%}
+.col-6{width: 50%;}
+.col-12{width:100%;}
+.text-center{text-align:center;}
+.J_widget{position: relative;overflow:hidden;line-height: 0;}
+.J_widget .contentCls li{float: left;font-size: 0;line-height: 0;}
+.J_widget .contentCls li img{max-width:none;line-height: 0;}
+.J_widget .time-box{position: absolute;z-index: 50;top: 20px;left: 50%;margin-left: -100px;}
+.J_widget .time-box span{display: inline-block;width: 28px;text-align: center;margin-right: 5px;padding: 3px 0px;font-size: 14px;line-height: 20px;color: #FF9800;background-color: #000;border: 1px solid #996210;}
+.J_widget .navCls{margin-left:-60px;position: absolute;bottom:5%;left: 50%;z-index: 40;}
+.J_widget .navCls li{width: 20px;height: 20px;border-radius: 50%;margin-right: 10px;background-color: #fff;display: inline-block;float: left;}
+.J_widget .navCls li.active{background-color: #f40;}
+.J_widget .toggleCls{top: 50%;margin-top: -60px;padding: 0 100px;}
+.J_widget .toggleCls.prev{z-index:40;left: 0;width: 66px;height: 128px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAACACAYAAAC/dL9XAAACVklEQVR42uzXW26DQAwFUPa/sHz3x7OdVKhtlLaEMIPHvvcaSyCYh42OeM2y1I7b/X5f1q1y2LqrDmE/B5Uh7PmkKoT9bagIYVuN1SDsVUclCNvrrAJh7wZUgLAjg9Qh7OhAZQjrGawKYb0TFCFsZJIahI1OVIKwM5NVIOxsAgUI80jCDmFeiZghzDMZK4R5J2SEsBlJ2SBsVmImCJuZnAXCZhdggGgRRdAhWlQhZIgWWQwVokUXRIRoGUXRIFpWYSSIllkcBaJlXwACREO4HbMhIBCyIWAQMiGgELIg4BAyICARoiFgESIhoBGiIOARIiAoEGZD0CDMhKBCmAVBhzADghLBG4IWwROCGsELgh7BA0IC4SyEDMIZCCmEUQg5hBEISYReCFmEHghphKMQ8ghHIEogvIMog7AHUQrhFUQ5hC2Ikgh/IT6WwvGA+NYoj/H8fLQL4nphLlvf0HZBFP6p2vvPbhdEwYXXkbV4uyCKYPRASGP0QshijEBIYoxCyGGcgZDCOAshg+EBIYHhBUGP4QlBjeENQYsxA4ISYxYEHcZMCCqM2RA0GBEQFBhREPAYkRDQGNEQsBgZEJAYWRBwGJkQUBjZEDAYCBAQGCgQ6RhIEKkYaBBpGIgQKRioEOEYyBChGOgQYRgMEGvYBRGEwQQxFYMNYhoGI8QUDFYIdwxmCFcMdgg3DAUIFwwViNMYShCnMNQghjEUIYYwVCG6MZQhujDUIQ5jVIA4hFEF4i1GJYhdjGoQLzEqQmxiVIX4h1EZ4hdGdYgHxgXxFbfV4FOAAQBuqGfSxEm/XQAAAABJRU5ErkJggg==) center no-repeat!important;
+}
+.J_widget .toggleCls.next{z-index:40;right: 0;width: 66px;height: 128px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAACACAYAAAC/dL9XAAACdElEQVR42uzdWW7CQBAEUN//YHznB1+HYBSJhGA8M+6lqnpG4gJPArx0Vy23223ZPvdzWSqfXxDbuU6I57lOiMoYOxD1MD5A1MI4gKiD0QBRA6MRQh+jA0IboxNCF2MAQhNjEEIP4wSEFsZJCB0MAwgNDCMIfgxDCG4MYwheDAcITgwnCD4MRwguDGcIHowACA6MIAh8jECI7awTAh0jAQITIwkCDyMRAgsjGQIHAwACAwMEIh8DCCIXAwwiDwMQIgcDFCIeAxgiFgMcIg6DACIGgwTCH4MIwheDDMIPgxDCB4MUwh6DGMIWgxzCDkMAwgZDBOI8hhDEOQwxiHEMQYgxDFGIfgxhiD4McYh2jAIQbRhFII4xCkF8xigGsY9REOI9RlGI/xiFIf5iFId4YkyIx/maCHeEh8H8WvwYzB/K2hDr6z/nvJgqCrHuXV3PG65iEOvRHfh8KFMEoukxnTpE84NbZYiuR/mqEN0vdxQhhl73qUEMvwBWgjg1EqACcXpIRAHCZGyIHcJskIwZwnS0kBXCfNiUEcJl/JgNwm0gnQnCdUWBBcJ9aYUBImSNCR0ibLENGSJ01REVInz5FREiZR0aDSJtQR4JIjUyAQUiPUQDAQIiViUbAiZoJxMCKnopCwIujCsDAjKeLRoCNrAvEgI6wjEKAj7UMwKCIubVG4Im+NcTgioK2guCLhzcA4IyLt4agrZAwBKCulLCCoK+ZMQCQqJ25iyETBHRGQipaqpRCLmyshEIyfq6XgjZQsMeCOmKy1YI+dLTFogSNbhHEGWKkT9BlKrK3oMoV57+DqJeg/wbiJIIrxCXpfDZDL4FGAAqO2fSEr0dlgAAAABJRU5ErkJggg==) center no-repeat!important;
+}
+</style>
+<style>
+    body{
+        background-color: #222;
+    }
+    .doc{
+        width: 1200px;
+        margin: 50px auto;
+        border:5px solid #035;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+    .doc .hd{
+        padding: 20px;
+        background-color: #035;
+    }
+    .doc .hd .title{
+        font-size: 20px;
+        color: #fff;
+    }
+    .doc .bd{
+
+     }
+    .doc .bd dt{
+        padding: 5px 30px;
+        color: #eee;
+        background-color: #408095;
+    }
+    .doc .bd dd{
+        font-size: 14px;
+        padding: 0px 40px;
+        color: #111;
+        background-color: #e6e6e6;
+        
+    }
+    .doc .bd dd .code{
+        padding: 2px 0;
+    }
+    .doc .bd dd .row{
+        margin:0 -40px;
+    }
+    .doc .bd dd .cols{
+        margin-right: -41px;
+        border-top: 1px solid #333;
+    }
+    .doc .bd dd .cols .left{
+        padding: 5px 0;
+        border-right:1px solid #333;
+        margin-right: -1px;
+    }
+    .info-table{
+        background: linear-gradient(#eee 30px, #d4e2e6 30px);
+        background-size: 100% 60px;
+        background-repeat: repeat;
+    }
+
+    .carousel-box{
+        width: 1100px;
+        margin: 0 auto;
+        padding: 50px;
+    }
+    .carousel-box .box-title{
+        font-size: 20px;
+        padding: 5px 10px;
+    }
+    .carousel-box .box-subtitle{
+        font-size: 16px;
+        padding: 5px 10px;
+    }
+    .exmaple{
+        padding: 10px 20px;
+        color: #fff;
+        border:1px solid #eee;
+    }
+    .exmaple .config{
+        color: #f90;
+        font-size: 14px;
+        margin: 10px 0px 20px;
+    }
+    .J_widget{
+        margin: 50px auto 80px;
+    }
+</style>
+</head>
+<body class="yahei">
+
+
+<div class="doc">
+<div class="hd">
+    <div class="title">jQuery插件 lrCalousel 使用说明</div>
+</div>
+<div class="bd">
+<dl class="row detail">
+<dt>1. 初始化</dt>
+<dd>
+    <pre class="code">
+
+    默认渲染
+        引用插件js时 如果用户未声明$.noLrCarousel=true 默认会自动渲染.J_widget元素中data-init不等于1的元素
+        (data-config中配置render:0时只渲染样式部分,不涉及js)
+
+    单个渲染
+        var Carousel=new $.widget($(".J_widget").eq(0));
+    </pre>
+    
+    <pre class="code">
+    加参数的单个渲染
+        var Carousel=new $.widget($(".J_widget"),{
+            effect:"scrollx",
+            autoplay:1
+            .....
+        });
+    </pre>
+    <pre class="code">
+    全组渲染
+        var Carousel=$.render_all($(".J_widget"));
+    </pre>
+</dd>
+<dt>2. 参数配置</dt>
+<dd class="text-center info-table">
+    <div class="cols row">
+        <div class="row-title left col-2">参数项</div>
+        <div class="row-title left col-3">可选值</div>
+        <div class="row-title left col-6">说明</div>
+        <div class="row-title left col-1">备注</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">type</div>
+        <div class="row-text left col-3">carousel/tab</div>
+        <div class="row-text left col-6">插件类型</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">effect</div>
+        <div class="row-text left col-3">none/fade/scrollx/scrolly</div>
+        <div class="row-text left col-6">
+            轮播类型
+            <div class="text">
+
+            </div>
+        </div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">contentCls</div>
+        <div class="row-text left col-3">.contentCls/*</div>
+        <div class="row-text left col-6">轮播视图容器</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">navCls</div>
+        <div class="row-text left col-3">.navCls/*</div>
+        <div class="row-text left col-6">轮播导航容器</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">triggerType</div>
+        <div class="row-text left col-3">click/mouseover</div>
+        <div class="row-text left col-6">切换方式</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">prevBtnCls</div>
+        <div class="row-text left col-3">.prev/*</div>
+        <div class="row-text left col-6">上一屏</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">nextBtnCls</div>
+        <div class="row-text left col-3">.next/*</div>
+        <div class="row-text left col-6">下一屏</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">view</div>
+        <div class="row-text left col-3">([width,height])</div>
+        <div class="row-text left col-6">视图尺寸</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">drift</div>
+        <div class="row-text left col-3">number(px)</div>
+        <div class="row-text left col-6">移动时的单位长度</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">speend</div>
+        <div class="row-text left col-3">500/number</div>
+        <div class="row-text left col-6">轮播切换速度(ms)</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">hasTriggers</div>
+        <div class="row-text left col-3">1/0</div>
+        <div class="row-text left col-6">开启焦点切换</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">autoplay</div>
+        <div class="row-text left col-3">1/0</div>
+        <div class="row-text left col-6">自动播放</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">render</div>
+        <div class="row-text left col-3">1/0</div>
+        <div class="row-text left col-6">轮播是否渲染</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">reverse</div>
+        <div class="row-text left col-3">0/1</div>
+        <div class="row-text left col-6">自动倒序播放</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">index</div>
+        <div class="row-text left col-3">0/number</div>
+        <div class="row-text left col-6">当前焦点图索引</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">delay</div>
+        <div class="row-text left col-3">5000/number</div>
+        <div class="row-text left col-6">焦点图停留时间(ms)</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">callback</div>
+        <div class="row-text left col-3">null/fn</div>
+        <div class="row-text left col-6">轮播执行完毕的回调函数</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">keyid</div>
+        <div class="row-text left col-3">*</div>
+        <div class="row-text left col-6">指定当前轮播实例的key</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">timeBtnCls</div>
+        <div class="row-text left col-3">.time-box/*</div>
+        <div class="row-text left col-6">倒计时容器</div>
+        <div class="row-text left col-1">-</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">timeUnitCls</div>
+        <div class="row-text left col-3">({Object})</div>
+        <div class="row-text left col-6">
+            时间单位容器 y/m/d/h/i/s
+        </div>
+        <div class="row-text left col-1">-</div>
+    </div>
+     <div class="cols row">
+        <div class="row-text left col-2">endtime</div>
+        <div class="row-text left col-3">(yyyy-mm-dd hh:ii:ss)</div>
+        <div class="row-text left col-6">结束时间</div>
+        <div class="row-text left col-1">支持-:/分隔符</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">key</div>
+        <div class="row-text left col-3">-</div>
+        <div class="row-text left col-6">轮播定时器id</div>
+        <div class="row-text left col-1">只读</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">timeKey</div>
+        <div class="row-text left col-3">-</div>
+        <div class="row-text left col-6">倒计时定时器id</div>
+        <div class="row-text left col-1">只读</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-2">cid</div>
+        <div class="row-text left col-3">-</div>
+        <div class="row-text left col-6">随机id识别码</div>
+        <div class="row-text left col-1">只读</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-12">注意: 1.可选项第一项为默认值; 2.圆括号内的特殊类型值请按格式; 3.备注只读类型的参数无须设置;</div>
+    </div>
+    <div class="cols row">
+        <div class="row-text left col-12">4.本插件满足基本demo结构即可默认渲染 可不依赖任何JS代码 如要阻止默认渲染 请在.J_widget元素上设置data-init="1" 或用JS声明$.noLrCarousel=true(适用于将渲染权限交给其它插件)</div>
+    </div>
+</dd>
+</dl>
+</div>
+</div>
+
+<div class="carousel-box">
+<div class="clear exmaple">
+    <div class="box-title">轮播示例1:</div>
+    <div class="box-subtitle">
+        y轴滚动 (由于在轮播容器 .J_widget 上外加了 data-init=1 所以不会被渲染)
+        <div class="config">
+            data-config='{"effect":"scrolly","speend":500,"autoplay":0}'
+        </div>
+    </div>
+    <div class="html-box">
+<code>
+    <pre>
+    HTML结构1
+    &lt;div class="J_widget" data-config=''>
+        &lt;ul class="contentCls">
+            &lt;li>&lt;img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg">&lt;/li>
+            &lt;li>&lt;img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg">&lt;/li>
+            &lt;li>&lt;img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg">&lt;/li>
+            &lt;li>&lt;img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg">&lt;/li>
+        &lt;/ul>
+        &lt;ul class="navCls">
+            &lt;li>&lt;/li>
+            &lt;li>&lt;/li>
+            &lt;li>&lt;/li>
+            &lt;li>&lt;/li>
+        &lt;/ul>
+        &lt;div class="prev">&lt;/div>
+        &lt;div class="next">&lt;/div>
+    &lt;/div>
+    </pre>
+</code>
+    </div>
+    <div class="css-box">
+    </div>
+</div>
+<div class="J_widget row" data-config='{"effect":"scrolly","speend":500,"autoplay":0}' data-init="1">
+    <ul class="contentCls">
+        <li><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></li>
+    </ul>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs left"></div>
+    <div class="next toggleCls abs right"></div>
+</div>
+<div class="clear exmaple">
+    <div class="box-title">轮播示例2:</div>
+    <div class="box-subtitle">
+        显示隐藏 倒计时 
+        <div class="config">
+            data-config='{"effect":"fade","view":[520,280],"delay":3000,"triggerType":"mouseover","endtime":"2016-9-30 17:05:02"}' 
+        </div>
+    </div>
+</div>
+<div class="J_widget row" data-config='{"effect":"fade","view":[520,280],"delay":3000,"triggerType":"mouseover","endtime":"2016-9-30 17:05:02"}'>
+    <ul class="contentCls">
+        <li><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></li>
+    </ul>
+    <div class="time-box">
+        <span class="t-d"></span>天<span class="t-h"></span>时<span class="t-i"></span>分<span class="t-s"></span>秒
+    </div>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs inner-left"></div>
+    <div class="next toggleCls abs inner-right"></div>
+</div>
+
+<div class="clear exmaple">
+    <div class="box-title">轮播示例3:</div>
+    <div class="box-subtitle">
+        x轴轮播
+        <div class="config">
+            data-config='{"effect":"scrollx","speend":500,"view":[520,280],"delay":3000,"triggerType":"mouseover","endtime":"2016-9-30 17:05:02"}' 
+        </div>
+    </div>
+</div>
+
+<div class="J_widget" data-config='{"effect":"scrollx","speend":500,"view":[520,280],"delay":3000,"triggerType":"mouseover","endtime":"2016-9-30 17:05:02"}'>
+    <ul class="contentCls">
+        <li><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></li>
+    </ul>
+    <div class="time-box">
+        <span class="t-d"></span>天<span class="t-h"></span>时<span class="t-i"></span>分<span class="t-s"></span>秒
+    </div>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs inner-left"></div>
+    <div class="next toggleCls abs inner-right"></div>
+</div>
+
+<div class="clear exmaple">
+    <div class="box-title">轮播示例4:</div>
+    <div class="box-subtitle">
+        默认轮播
+        <div class="config">
+            data-config=''
+        </div>
+    </div>
+</div>
+<div class="J_widget">
+    <ul class="contentCls">
+        <li><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></li>
+        <li><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></li>
+    </ul>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs inner-left"></div>
+    <div class="next toggleCls abs inner-right"></div>
+</div>
+
+<div class="clear exmaple">
+    <div class="box-title">轮播示例5:</div>
+    <div class="box-subtitle">
+        x轴轮播 多图轮播
+        <div class="config">
+            data-config='{"effect":"scrollx","move":1,"view":[1040,280],"keyid":"test001","pageX":"auto","drift":520,"speend":500,"autoplay":1,"endIndex":-1,"delay":5000,"triggerType":"click"}'
+        </div>
+    </div>
+        <div class="html-box">
+<code>
+    <pre>
+    HTML结构2
+    &lt;div class="J_widget" data-config=''>
+        &lt;ul class="contentCls">
+            &lt;li>
+                &lt;dl>
+                    &lt;dd>&lt;img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg">&lt;/dd>
+                    &lt;dd>&lt;img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg">&lt;/dd>
+                    &lt;dd>&lt;img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg">&lt;/dd>
+                    &lt;dd>&lt;img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg">&lt;/dd>
+                &lt;/dl>
+            &lt;/li>
+        &lt;/ul>
+        &lt;ul class="navCls">
+            &lt;li>&lt;/li>
+            &lt;li>&lt;/li>
+            &lt;li>&lt;/li>
+            &lt;li>&lt;/li>
+        &lt;/ul>
+        &lt;div class="prev">&lt;/div>
+        &lt;div class="next">&lt;/div>
+    &lt;/div>
+    </pre>
+</code>
+    </div>
+    <div class="css-box">
+    </div>
+</div>
+
+<div class="J_widget rel" data-config='{"effect":"scrollx","move":1,"view":[1040,280],"keyid":"test001","pageX":"auto","drift":520,"speend":500,"autoplay":1,"endIndex":-1,"delay":5000,"triggerType":"click"}'>
+    <ul class="contentCls">
+        <li style="white-space: nowrap;">
+            <dl class="row" >
+                <dd style="float:left;"><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></dd>
+            </dl>
+        </li>
+    </ul>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs inner-left"></div>
+    <div class="next toggleCls abs inner-right"></div>
+</div>
+
+<div class="J_widget rel" data-config='{"effect":"scrollx","move":1,"view":[1560,280],"keyid":"test001","pageX":"auto","drift":520,"speend":500,"autoplay":1,"endIndex":-1,"delay":5000,"triggerType":"click"}'>
+    <ul class="contentCls">
+        <li style="white-space: nowrap;">
+            <dl class="row" >
+                <dd style="float:left;"><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd style="float:left;"><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></dd>
+            </dl>
+        </li>
+    </ul>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs inner-left"></div>
+    <div class="next toggleCls abs inner-right"></div>
+</div>
+
+<div class="clear exmaple">
+    <div class="box-title">轮播示例5:</div>
+    <div class="box-subtitle">
+        y轴轮播 多图轮播
+        <div class="config">
+            data-config='{"effect":"scrolly","move":1,"view":[520,560],"height":280,"drift":280,"keyid":"test001","pageY":"auto","speend":500,"autoplay":0,"endIndex":-1,"delay":5000,"triggerType":"click"}'
+        </div>
+    </div>
+</div>
+
+<div class="J_widget rel" data-config='{"effect":"scrolly","move":1,"view":[520,560],"height":280,"drift":280,"keyid":"test001","pageY":"auto","speend":500,"autoplay":0,"endIndex":-1,"delay":5000,"triggerType":"click"}'>
+    <ul class="contentCls">
+        <li style="white-space: nowrap;">
+            <dl class="row" >
+                <dd><img src="https://img.alicdn.com/tps/TB1fsp9LpXXXXXCXXXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd><img src="https://aecpm.alicdn.com/simba/img/TB19okRLVXXXXXHXFXXSutbFXXX.jpg" alt=""></dd>
+                <dd><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></dd>
+                <dd><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd><img src="https://img.alicdn.com/tps/TB10aBDLpXXXXX0XFXXXXXXXXXX-520-280.jpg" alt=""></dd>
+                <dd><img src="https://aecpm.alicdn.com/simba/img/TB1yDHkIVXXXXbaXpXXSutbFXXX.jpg" alt=""></dd>
+            </dl>
+        </li>
+    </ul>
+    <ul class="navCls">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="prev toggleCls abs inner-left"></div>
+    <div class="next toggleCls abs inner-right"></div>
+</div>
+
+<!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="1" data-title="请替换成文章的标题" data-url="请替换成文章的网址" style="padding:10px;background:#fff;"></div>
+<!-- 多说评论框 end -->
+
+</div>
+<script src='./js/carousel.js'></script>
+<script>
+    //是否阻止自动渲染
+    $.noLrCarousel=true;
+
+    //手动渲染
+    var Carousel=$.render_all(".J_widget");
+</script>
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"kscript"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+<!-- 多说公共JS代码 end -->
+</html>
